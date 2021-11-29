@@ -1,7 +1,7 @@
 package sand.controller;
+
 import java.awt.*;
 import java.util.*;
-
 import sand.view.SandDisplay;
 
 public class SandLab
@@ -33,8 +33,8 @@ public class SandLab
     
     //1. Add code to initialize the data member grid with same dimensions
     
-    
-    display = new SandDisplay("Falling Sand", numRows, numCols, names);
+    this.grid = new int[numRows][numCols];
+    this.display = new SandDisplay("Falling Sand", numRows, numCols, names);
   }
   
   //called when the user clicks on a location using the given tool
