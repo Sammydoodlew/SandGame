@@ -11,6 +11,7 @@ public class SandLab
   public static final int EMPTY = 0;
   public static final int METAL = 1;
   public static final int SAND = 2;
+  public static final int WATER = 3;
   
   //do not add any more fields below
   private int[][] grid;
@@ -27,11 +28,12 @@ public class SandLab
     String[] names;
     // Change this value to add more buttons
     //Step 4,6
-    names = new String[3];
+    names = new String[4];
     // Each value needs a name for the button
     names[EMPTY] = "Empty";
     names[METAL] = "Metal";
     names[SAND] = "Sand";
+    names[WATER] = "Water";
     
     //1. Add code to initialize the data member grid with same dimensions
     
@@ -69,6 +71,10 @@ public class SandLab
 			  {
 				  display.setColor(row, col, Color.YELLOW);
 			  }
+			  else if(currentTool == WATER)
+			  {
+				  display.setColor(row, col, Color.BLUE);
+			  }
 		  }
 	  }
     
@@ -94,6 +100,34 @@ public class SandLab
 		  {
 			  grid[randomRow][randomCol] = EMPTY;
 			  grid[randomRow + 1][randomCol] = SAND;
+		  }
+	  }
+	  else if(currentTool == WATER)
+	  {
+		  int randomDir = (int)(Math.random() * 3);
+		  if(randomDir == 0 && randomRow < grid.length - 1)
+		  {
+			  if(grid[randomRow + 1][randomCol] == EMPTY)
+			  {
+				  grid[randomRow][randomCol] = EMPTY;
+				  grid[randomRow + 1][randomCol] = WATER;
+			  }
+		  }
+		  else if(randomDir == 1 && randomCol < grid[randomCol].length - 1)
+		  {
+			  if(grid[randomRow][randomCol + 1] == EMPTY)
+			  {
+				  grid[randomRow][randomCol] = EMPTY;
+				  grid[randomRow][randomCol + 1] = WATER;
+			  }
+		  }
+		  else if(randomDir == 2 && randomCol > 0)
+		  {
+			  if(grid[randomRow][randomCol - 1] == EMPTY)
+			  {
+				  grid[randomRow][randomCol] = EMPTY;
+				  grid[randomRow][randomCol - 1] = WATER;
+			  }
 		  }
 	  }
 	  else if(currentTool == METAL)
