@@ -101,6 +101,11 @@ public class SandLab
 			  grid[randomRow][randomCol] = EMPTY;
 			  grid[randomRow + 1][randomCol] = SAND;
 		  }
+		  else if(grid[randomRow + 1][randomCol] == WATER)
+		  {
+			  grid[randomRow][randomCol] = WATER;
+			  grid[randomRow + 1][randomCol] = SAND;
+		  }
 	  }
 	  else if(currentTool == WATER)
 	  {
