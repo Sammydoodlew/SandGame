@@ -14,8 +14,9 @@ public class SandLab
   public static final int WATER = 3;
   public static final int WOOD = 4;
   public static final int FIRE = 5;
-  public static final int ASH = 6;
-  public static final int WOOD_FLAMING = 7;
+  public static final int ICE = 6;
+  public static final int ASH = 7;
+  public static final int WOOD_FLAMING = 8;
   
   //do not add any more fields below
   private int[][] grid;
@@ -32,7 +33,7 @@ public class SandLab
     String[] names;
     // Change this value to add more buttons
     //Step 4,6
-    names = new String[6];
+    names = new String[7];
     // Each value needs a name for the button
     names[EMPTY] = "Empty";
     names[METAL] = "Metal";
@@ -40,6 +41,7 @@ public class SandLab
     names[WATER] = "Water";
     names[WOOD] = "Wood";
     names[FIRE] = "Fire";
+    names[ICE] = "Ice";
     
     //1. Add code to initialize the data member grid with same dimensions
     
@@ -75,11 +77,11 @@ public class SandLab
 			  } 
 			  else if(currentTool == SAND)
 			  {
-				  display.setColor(row, col, Color.YELLOW);
+				  display.setColor(row, col, new Color(220, 210, 120));
 			  }
 			  else if(currentTool == WATER)
 			  {
-				  display.setColor(row, col, Color.BLUE);
+				  display.setColor(row, col, new Color(70, 100, 200));
 			  }
 			  else if(currentTool == WOOD)
 			  {
@@ -97,9 +99,63 @@ public class SandLab
 			  {
 				  display.setColor(row, col, Color.ORANGE);
 			  }
+			  else if(currentTool == ICE)
+			  {
+				  display.setColor(row, col, new Color(125, 185, 220));
+			  }
 		  }
 	  }
     
+  }
+  public void gravity(int type, int randomRow, int randomCol)
+  {	  
+	  int randomDir = (int)(Math.random() * 2);
+	  
+	  if(grid[randomRow + 1][randomCol] == EMPTY)
+	  {
+		  grid[randomRow][randomCol] = EMPTY;
+		  grid[randomRow + 1][randomCol] = type;
+		  return;
+	  }
+	  if(randomCol < grid[randomRow].length - 1 && randomDir == 0)
+	  {
+		  if(grid[randomRow + 1][randomCol + 1] == EMPTY && grid[randomRow][randomCol + 1] == EMPTY)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  grid[randomRow + 1][randomCol + 1] = type;
+		  }
+	  }
+	  else if(randomCol > 0 && randomDir == 1)
+	  {
+		  if(grid[randomRow + 1][randomCol - 1] == EMPTY && grid[randomRow][randomCol - 1] == EMPTY)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  grid[randomRow + 1][randomCol - 1] = type;
+		  }
+	  }
+	  
+	  if(grid[randomRow + 1][randomCol] == WATER)
+	  {
+		  grid[randomRow][randomCol] = WATER;
+		  grid[randomRow + 1][randomCol] = type;
+		  return;
+	  }
+	  if(randomCol < grid[randomRow].length - 1 && randomDir == 0)
+	  {
+		  if(grid[randomRow + 1][randomCol + 1] == WATER && grid[randomRow][randomCol + 1] == WATER)
+		  {
+			  grid[randomRow][randomCol] = WATER;
+			  grid[randomRow + 1][randomCol + 1] = type;
+		  }
+	  }
+	  else if(randomCol > 0 && randomDir == 1)
+	  {
+		  if(grid[randomRow + 1][randomCol - 1] == WATER && grid[randomRow][randomCol - 1] == WATER)
+		  {
+			  grid[randomRow][randomCol] = WATER;
+			  grid[randomRow + 1][randomCol - 1] = type;
+		  }
+	  }
   }
 
   //Step 5,7
@@ -118,16 +174,7 @@ public class SandLab
 	  
 	  if(currentTool == SAND && randomRow < grid.length - 1)
 	  {
-		  if(grid[randomRow + 1][randomCol] == EMPTY)
-		  {
-			  grid[randomRow][randomCol] = EMPTY;
-			  grid[randomRow + 1][randomCol] = SAND;
-		  }
-		  else if(grid[randomRow + 1][randomCol] == WATER)
-		  {
-			  grid[randomRow][randomCol] = WATER;
-			  grid[randomRow + 1][randomCol] = SAND;
-		  }
+		  gravity(SAND, randomRow, randomCol);		  
 	  }
 	  else if(currentTool == WATER)
 	  {
@@ -173,8 +220,8 @@ public class SandLab
 	  {
 		  int randomDir = (int)(Math.random() * 3);
 		  int dissapate = (int)(Math.random() * 50);
-		  int flammability = 1;
-		  int flameChance = (int)(Math.random() * 20);
+		  int flammability = 20;
+		  int flameChance = (int)(Math.random() * flammability);
 		  
 		  if(dissapate == 1)
 		  {
@@ -189,7 +236,7 @@ public class SandLab
 				  grid[randomRow][randomCol] = EMPTY;
 				  grid[randomRow - 1][randomCol] = FIRE;
 			  }
-			  else if(grid[randomRow - 1][randomCol] == WOOD && flameChance == flammability)
+			  else if(grid[randomRow - 1][randomCol] == WOOD && flameChance == 1)
 			  {
 				  grid[randomRow][randomCol] = EMPTY;
 				  grid[randomRow - 1][randomCol] = WOOD_FLAMING;
@@ -202,7 +249,7 @@ public class SandLab
 				  grid[randomRow][randomCol] = EMPTY;
 				  grid[randomRow][randomCol + 1] = FIRE;
 			  }
-			  else if(grid[randomRow][randomCol + 1] == WOOD && flameChance == flammability)
+			  else if(grid[randomRow][randomCol + 1] == WOOD && flameChance == 1)
 			  {
 				  grid[randomRow][randomCol] = EMPTY;
 				  grid[randomRow][randomCol + 1] = WOOD_FLAMING;
@@ -215,7 +262,7 @@ public class SandLab
 				  grid[randomRow][randomCol] = EMPTY;
 				  grid[randomRow][randomCol - 1] = FIRE;
 			  }
-			  else if(grid[randomRow][randomCol - 1] == WOOD && flameChance == flammability)
+			  else if(grid[randomRow][randomCol - 1] == WOOD && flameChance == 1)
 			  {
 				  grid[randomRow][randomCol] = EMPTY;
 				  grid[randomRow][randomCol - 1] = WOOD_FLAMING;
@@ -257,16 +304,7 @@ public class SandLab
 	  }
 	  else if(currentTool == ASH && randomRow < grid.length - 1)
 	  {
-		  if(grid[randomRow + 1][randomCol] == EMPTY)
-		  {
-			  grid[randomRow][randomCol] = EMPTY;
-			  grid[randomRow + 1][randomCol] = ASH;
-		  }
-		  else if(grid[randomRow + 1][randomCol] == WATER)
-		  {
-			  grid[randomRow][randomCol] = WATER;
-			  grid[randomRow + 1][randomCol] = ASH;
-		  }
+		  gravity(ASH, randomRow, randomCol);
 	  }
   }
   
