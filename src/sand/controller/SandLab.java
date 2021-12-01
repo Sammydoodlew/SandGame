@@ -15,8 +15,12 @@ public class SandLab
   public static final int WOOD = 4;
   public static final int FIRE = 5;
   public static final int ICE = 6;
-  public static final int ASH = 7;
-  public static final int WOOD_FLAMING = 8;
+  public static final int DIRT = 7;
+  public static final int SEED = 8;
+  public static final int GRASS = 9;
+  public static final int ASH = 10;
+  public static final int WOOD_FLAMING = 11;
+  public static final int LEAVES = 12;
   
   //do not add any more fields below
   private int[][] grid;
@@ -33,7 +37,7 @@ public class SandLab
     String[] names;
     // Change this value to add more buttons
     //Step 4,6
-    names = new String[7];
+    names = new String[9];
     // Each value needs a name for the button
     names[EMPTY] = "Empty";
     names[METAL] = "Metal";
@@ -42,6 +46,7 @@ public class SandLab
     names[WOOD] = "Wood";
     names[FIRE] = "Fire";
     names[ICE] = "Ice";
+    names[DIRT] = "Dirt";
     
     //1. Add code to initialize the data member grid with same dimensions
     
@@ -85,11 +90,11 @@ public class SandLab
 			  }
 			  else if(currentTool == WOOD)
 			  {
-				  display.setColor(row, col, Color.ORANGE);
+				  display.setColor(row, col, new Color(205, 130, 65));
 			  }
 			  else if(currentTool == FIRE)
 			  {
-				  display.setColor(row, col, Color.RED);
+				  display.setColor(row, col, new Color(220, 85, 0));
 			  }
 			  else if(currentTool == ASH)
 			  {
@@ -103,10 +108,27 @@ public class SandLab
 			  {
 				  display.setColor(row, col, new Color(125, 185, 220));
 			  }
+			  else if(currentTool == DIRT)
+			  {
+				  display.setColor(row, col, new Color(150, 75, 25));
+			  }
+			  else if(currentTool == GRASS)
+			  {
+				  display.setColor(row, col, new Color(80, 230, 45));
+			  }
+			  else if(currentTool == SEED)
+			  {
+				  display.setColor(row, col, new Color(130, 210, 45));
+			  }
+			  else if(currentTool == LEAVES)
+			  {
+				  display.setColor(row, col, new Color(50, 230, 30));
+			  }
 		  }
 	  }
     
   }
+  
   public void gravity(int type, int randomRow, int randomCol)
   {	  
 	  int randomDir = (int)(Math.random() * 2);
@@ -157,7 +179,121 @@ public class SandLab
 		  }
 	  }
   }
-
+  
+  public void gravityIce(int type, int randomRow, int randomCol)
+  {	  
+	  int randomDir = (int)(Math.random() * 2);
+	  int movement = (int)(Math.random() * 200);
+	  
+	  if(grid[randomRow + 1][randomCol] == EMPTY)
+	  {
+		  grid[randomRow][randomCol] = EMPTY;
+		  grid[randomRow + 1][randomCol] = type;
+		  return;
+	  }
+	  
+	  if(movement == 1)
+	  {
+		  if(randomCol < grid[randomRow].length - 1 && randomDir == 0)
+		  {
+			  if(grid[randomRow + 1][randomCol + 1] == EMPTY && grid[randomRow][randomCol + 1] == EMPTY)
+			  {
+				  grid[randomRow][randomCol] = EMPTY;
+				  grid[randomRow + 1][randomCol + 1] = type;
+			  }
+		  }
+		  else if(randomCol > 0 && randomDir == 1)
+		  {
+			  if(grid[randomRow + 1][randomCol - 1] == EMPTY && grid[randomRow][randomCol - 1] == EMPTY)
+			  {
+				  grid[randomRow][randomCol] = EMPTY;
+				  grid[randomRow + 1][randomCol - 1] = type;
+			  }
+		  }
+	  }
+  }
+  
+  public void gravityDirt(int type, int randomRow, int randomCol)
+  {
+	  int randomDir = (int)(Math.random() * 2);
+	  int movement = (int)(Math.random() * 100);
+	  int grass = (int)(Math.random() * 2000);
+	  int dirt = (int)(Math.random() * 100);
+	  
+	  if(grid[randomRow + 1][randomCol] == EMPTY)
+	  {
+		  grid[randomRow][randomCol] = EMPTY;
+		  grid[randomRow + 1][randomCol] = type;
+		  return;
+	  }
+	  
+	  if(movement == 1)
+	  {
+		  if(randomCol < grid[randomRow].length - 1 && randomDir == 0)
+		  {
+			  if(grid[randomRow + 1][randomCol + 1] == EMPTY && grid[randomRow][randomCol + 1] == EMPTY)
+			  {
+				  grid[randomRow][randomCol] = EMPTY;
+				  grid[randomRow + 1][randomCol + 1] = type;
+			  }
+		  }
+		  else if(randomCol > 0 && randomDir == 1)
+		  {
+			  if(grid[randomRow + 1][randomCol - 1] == EMPTY && grid[randomRow][randomCol - 1] == EMPTY)
+			  {
+				  grid[randomRow][randomCol] = EMPTY;
+				  grid[randomRow + 1][randomCol - 1] = type;
+			  }
+		  }
+	  }
+	  
+	  if(grass == 1 && grid[randomRow][randomCol] > 0)
+	  {
+		  if(grid[randomRow - 1][randomCol] == EMPTY)
+		  {
+			  grid[randomRow][randomCol] = GRASS;
+		  }
+	  }
+	  
+	  if(dirt == 1 && grid[randomRow][randomCol] < grid[randomRow].length)
+	  {
+		  if(grid[randomRow - 1][randomCol] != EMPTY)
+		  {
+			  grid[randomRow][randomCol] = DIRT;
+		  }
+	  }
+  }
+  
+  public void buildTree(int randomRow, int randomCol)
+  {
+	  int treeHeight = (int)(Math.random() * 5) + 5;
+	  int bushRadius = (int)(Math.random() * 3) * 2 - 1; 
+	  
+	  if(randomRow - treeHeight < 1)
+	  {
+		  return;
+	  }
+	  
+	  for(int i = randomRow; i > randomRow - treeHeight; i--)
+	  {
+		  grid[i][randomCol] = WOOD;
+	  }
+	  
+	  for(int i = randomRow - treeHeight; i > (randomRow + treeHeight) - bushRadius; i--)
+	  {
+		  if(randomCol - bushRadius < 0 || randomCol + bushRadius > grid.length - 1)
+		  {
+			  System.out.println("bruh");
+			  return;
+		  }
+		  
+		  for(int col = (randomCol - treeHeight) - bushRadius; col <= (randomCol - treeHeight) + bushRadius; col++)
+		  {
+			  grid[i][col] = LEAVES;
+		  }
+	  }
+  }
+  
   //Step 5,7
   //called repeatedly.
   //causes one random particle in grid to maybe do something.
@@ -305,6 +441,35 @@ public class SandLab
 	  else if(currentTool == ASH && randomRow < grid.length - 1)
 	  {
 		  gravity(ASH, randomRow, randomCol);
+	  }
+	  else if(currentTool == ICE && randomRow < grid.length - 1)
+	  {
+		  gravityIce(ICE, randomRow, randomCol);
+	  }
+	  else if(currentTool == DIRT && randomRow < grid.length - 1)
+	  {
+		  gravityDirt(DIRT, randomRow, randomCol);
+	  }
+	  else if(currentTool == GRASS && randomRow < grid.length - 1)
+	  {
+		  gravityDirt(GRASS, randomRow, randomCol);
+	  }
+	  else if(currentTool == SEED && randomRow < grid.length - 1)
+	  {
+		  if(grid[randomRow + 1][randomCol] == EMPTY)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  grid[randomRow + 1][randomCol] = SEED;
+		  }
+		  else if(grid[randomRow + 1][randomCol] == GRASS)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  buildTree(randomRow, randomCol);
+		  }
+		  else
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+		  }
 	  }
   }
   
