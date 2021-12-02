@@ -21,6 +21,7 @@ public class SandLab
   public static final int ASH = 10;
   public static final int WOOD_FLAMING = 11;
   public static final int LEAVES = 12;
+  public static final int LEAVES_FLAMING = 13;
   
   //do not add any more fields below
   private int[][] grid;
@@ -47,6 +48,7 @@ public class SandLab
     names[FIRE] = "Fire";
     names[ICE] = "Ice";
     names[DIRT] = "Dirt";
+    names[SEED] = "Seed";
     
     //1. Add code to initialize the data member grid with same dimensions
     
@@ -122,7 +124,11 @@ public class SandLab
 			  }
 			  else if(currentTool == LEAVES)
 			  {
-				  display.setColor(row, col, new Color(50, 230, 30));
+				  display.setColor(row, col, new Color(85, 195, 80));
+			  }
+			  else if(currentTool == LEAVES_FLAMING)
+			  {
+				  display.setColor(row, col, new Color(245, 255, 70));
 			  }
 		  }
 	  }
@@ -266,8 +272,9 @@ public class SandLab
   
   public void buildTree(int randomRow, int randomCol)
   {
-	  int treeHeight = (int)(Math.random() * 5) + 5;
-	  int bushRadius = (int)(Math.random() * 3) * 2 - 1; 
+	  int treeHeight = (int)(Math.random() * 4) + 5;
+	  int bushRadius = (int)(Math.random() * 4) + 4; 
+	  System.out.println(randomRow + ", " + randomCol);
 	  
 	  if(randomRow - treeHeight < 1)
 	  {
@@ -279,17 +286,182 @@ public class SandLab
 		  grid[i][randomCol] = WOOD;
 	  }
 	  
-	  for(int i = randomRow - treeHeight; i > (randomRow + treeHeight) - bushRadius; i--)
+	  for(int i = 0; i < 30; i++)
 	  {
-		  if(randomCol - bushRadius < 0 || randomCol + bushRadius > grid.length - 1)
-		  {
-			  System.out.println("bruh");
-			  return;
-		  }
+		  int randomRangeRow = (randomRow - treeHeight) + (int)(Math.random() * bushRadius);
+		  int randomRangeCol = randomCol - (bushRadius / 2) + (int)(Math.random() * bushRadius);
 		  
-		  for(int col = (randomCol - treeHeight) - bushRadius; col <= (randomCol - treeHeight) + bushRadius; col++)
+		  if(randomRangeRow > 0 && randomRangeRow < grid.length)
 		  {
-			  grid[i][col] = LEAVES;
+			  if(randomRangeCol > 0 && randomRangeCol < grid[randomRow].length)
+			  {
+				  grid[randomRangeRow][randomRangeCol] = LEAVES;
+			  }
+		  }
+	  }
+	  
+//	  for(int row = randomRow - treeHeight + bushRadius; randomRow > randomRow - treeHeight; row--)
+//	  {
+//		  for(int col = randomCol - bushRadius; col < randomCol + bushRadius; col++)
+//		  {
+//			  grid[row][col] = LEAVES;
+//		  }
+//	  }
+ 
+  }
+
+  public void fire(int type, int randomRow, int randomCol)
+  {
+	  int randomDir = (int)(Math.random() * 3);
+	  int dissapate = (int)(Math.random() * 50);
+	  int flammability = 20;
+	  int flameChance = (int)(Math.random() * flammability);
+	  
+	  if(dissapate == 1)
+	  {
+		  grid[randomRow][randomCol] = EMPTY;
+		  return;
+	  }
+	  
+	  if(randomDir == 0 && randomRow > 0)
+	  {
+		  if(grid[randomRow - 1][randomCol] == EMPTY)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  grid[randomRow - 1][randomCol] = type;
+		  }
+		  else if(grid[randomRow - 1][randomCol] == WOOD && flameChance == 1)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  grid[randomRow - 1][randomCol] = WOOD_FLAMING;
+		  }
+		  else if(grid[randomRow - 1][randomCol] == LEAVES && flameChance == 1)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  grid[randomRow - 1][randomCol] = LEAVES_FLAMING;
+		  }
+	  }
+	  else if(randomDir == 1 && randomCol < grid[randomCol].length - 1)
+	  {
+		  if(grid[randomRow][randomCol + 1] == EMPTY)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  grid[randomRow][randomCol + 1] = type;
+		  }
+		  else if(grid[randomRow][randomCol + 1] == WOOD && flameChance == 1)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  grid[randomRow][randomCol + 1] = WOOD_FLAMING;
+		  }
+		  else if(grid[randomRow][randomCol + 1] == LEAVES && flameChance == 1)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  grid[randomRow][randomCol + 1] = LEAVES_FLAMING;
+		  }
+	  }
+	  else if(randomDir == 2 && randomCol > 0)
+	  {
+		  if(grid[randomRow][randomCol - 1] == EMPTY)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  grid[randomRow][randomCol - 1] = type;
+		  }
+		  else if(grid[randomRow][randomCol - 1] == WOOD && flameChance == 1)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  grid[randomRow][randomCol - 1] = WOOD_FLAMING;
+		  }
+		  else if(grid[randomRow][randomCol - 1] == LEAVES && flameChance == 1)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  grid[randomRow][randomCol - 1] = LEAVES_FLAMING;
+		  }
+	  }
+  }
+
+  public void flaming(int randomRow, int randomCol)
+  {
+	  int randomDir = (int)(Math.random() * 3);
+	  int ash = (int)(Math.random() * 1000);
+	  
+	  if(ash == 1)
+	  {
+		  grid[randomRow][randomCol] = ASH;
+		  return;
+	  }
+			  
+	  if(randomDir == 0 && randomRow > 0)
+	  {
+		  if(grid[randomRow - 1][randomCol] == EMPTY)
+		  {
+			  grid[randomRow - 1][randomCol] = FIRE;
+		  }
+	  }
+	  else if(randomDir == 1 && randomCol < grid[randomCol].length - 1)
+	  {
+		  if(grid[randomRow][randomCol + 1] == EMPTY)
+		  {
+			  grid[randomRow][randomCol + 1] = FIRE;
+		  }
+	  }
+	  else if(randomDir == 2 && randomCol > 0)
+	  {
+		  if(grid[randomRow][randomCol - 1] == EMPTY)
+		  {
+			  grid[randomRow][randomCol - 1] = FIRE;
+		  }
+	  }
+  }
+
+  public void water(int type, int randomRow, int randomCol)
+  {
+	  int randomDir = (int)(Math.random() * 3);
+	  if(randomDir == 0 && randomRow < grid.length - 1)
+	  {
+		  if(grid[randomRow + 1][randomCol] == EMPTY || grid[randomRow + 1][randomCol] == FIRE)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  grid[randomRow + 1][randomCol] = type;
+		  }
+		  else if(grid[randomRow + 1][randomCol] == WOOD_FLAMING)
+		  {
+			  grid[randomRow + 1][randomCol] = WOOD;
+		  }
+		  else if(grid[randomRow + 1][randomCol] == LEAVES_FLAMING)
+		  {
+			  grid[randomRow + 1][randomCol] = LEAVES;
+		  }
+	  }
+	  else if(randomDir == 1 && randomCol < grid[randomCol].length - 1)
+	  {
+		  if(grid[randomRow][randomCol + 1] == EMPTY || grid[randomRow][randomCol + 1] == FIRE)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  grid[randomRow][randomCol + 1] = type;
+		  }
+		  else if(grid[randomRow][randomCol + 1] == WOOD_FLAMING)
+		  {
+			  grid[randomRow][randomCol + 1] = WOOD;
+		  }
+		  else if(grid[randomRow][randomCol + 1] == LEAVES_FLAMING)
+		  {
+			  grid[randomRow][randomCol + 1] = LEAVES;
+		  }
+	  }
+	  else if(randomDir == 2 && randomCol > 0)
+	  {
+		  if(grid[randomRow][randomCol - 1] == EMPTY || grid[randomRow][randomCol - 1] == FIRE)
+		  {
+			  grid[randomRow][randomCol] = EMPTY;
+			  grid[randomRow][randomCol - 1] = type;
+		  }
+		  else if(grid[randomRow][randomCol - 1] == WOOD_FLAMING)
+		  {
+			  grid[randomRow][randomCol - 1] = WOOD;
+		  }
+		  else if(grid[randomRow][randomCol - 1] == LEAVES_FLAMING)
+		  {
+			  grid[randomRow][randomCol - 1] = LEAVES;
 		  }
 	  }
   }
@@ -314,129 +486,15 @@ public class SandLab
 	  }
 	  else if(currentTool == WATER)
 	  {
-		  int randomDir = (int)(Math.random() * 3);
-		  if(randomDir == 0 && randomRow < grid.length - 1)
-		  {
-			  if(grid[randomRow + 1][randomCol] == EMPTY || grid[randomRow + 1][randomCol] == FIRE)
-			  {
-				  grid[randomRow][randomCol] = EMPTY;
-				  grid[randomRow + 1][randomCol] = WATER;
-			  }
-			  else if(grid[randomRow + 1][randomCol] == WOOD_FLAMING)
-			  {
-				  grid[randomRow + 1][randomCol] = WOOD;
-			  }
-		  }
-		  else if(randomDir == 1 && randomCol < grid[randomCol].length - 1)
-		  {
-			  if(grid[randomRow][randomCol + 1] == EMPTY || grid[randomRow][randomCol + 1] == FIRE)
-			  {
-				  grid[randomRow][randomCol] = EMPTY;
-				  grid[randomRow][randomCol + 1] = WATER;
-			  }
-			  else if(grid[randomRow][randomCol + 1] == WOOD_FLAMING)
-			  {
-				  grid[randomRow][randomCol + 1] = WOOD;
-			  }
-		  }
-		  else if(randomDir == 2 && randomCol > 0)
-		  {
-			  if(grid[randomRow][randomCol - 1] == EMPTY || grid[randomRow][randomCol - 1] == FIRE)
-			  {
-				  grid[randomRow][randomCol] = EMPTY;
-				  grid[randomRow][randomCol - 1] = WATER;
-			  }
-			  else if(grid[randomRow][randomCol - 1] == WOOD_FLAMING)
-			  {
-				  grid[randomRow][randomCol - 1] = WOOD;
-			  }
-		  }
+		  water(WATER, randomRow, randomCol);
 	  }
 	  else if(currentTool == FIRE)
 	  {
-		  int randomDir = (int)(Math.random() * 3);
-		  int dissapate = (int)(Math.random() * 50);
-		  int flammability = 20;
-		  int flameChance = (int)(Math.random() * flammability);
-		  
-		  if(dissapate == 1)
-		  {
-			  grid[randomRow][randomCol] = EMPTY;
-			  return;
-		  }
-		  
-		  if(randomDir == 0 && randomRow > 0)
-		  {
-			  if(grid[randomRow - 1][randomCol] == EMPTY)
-			  {
-				  grid[randomRow][randomCol] = EMPTY;
-				  grid[randomRow - 1][randomCol] = FIRE;
-			  }
-			  else if(grid[randomRow - 1][randomCol] == WOOD && flameChance == 1)
-			  {
-				  grid[randomRow][randomCol] = EMPTY;
-				  grid[randomRow - 1][randomCol] = WOOD_FLAMING;
-			  }
-		  }
-		  else if(randomDir == 1 && randomCol < grid[randomCol].length - 1)
-		  {
-			  if(grid[randomRow][randomCol + 1] == EMPTY)
-			  {
-				  grid[randomRow][randomCol] = EMPTY;
-				  grid[randomRow][randomCol + 1] = FIRE;
-			  }
-			  else if(grid[randomRow][randomCol + 1] == WOOD && flameChance == 1)
-			  {
-				  grid[randomRow][randomCol] = EMPTY;
-				  grid[randomRow][randomCol + 1] = WOOD_FLAMING;
-			  }
-		  }
-		  else if(randomDir == 2 && randomCol > 0)
-		  {
-			  if(grid[randomRow][randomCol - 1] == EMPTY)
-			  {
-				  grid[randomRow][randomCol] = EMPTY;
-				  grid[randomRow][randomCol - 1] = FIRE;
-			  }
-			  else if(grid[randomRow][randomCol - 1] == WOOD && flameChance == 1)
-			  {
-				  grid[randomRow][randomCol] = EMPTY;
-				  grid[randomRow][randomCol - 1] = WOOD_FLAMING;
-			  }
-		  }
+		  fire(FIRE, randomRow, randomCol);
 	  }
 	  else if(currentTool == WOOD_FLAMING)
 	  {
-		  int randomDir = (int)(Math.random() * 3);
-		  int ash = (int)(Math.random() * 1000);
-		  
-		  if(ash == 1)
-		  {
-			  grid[randomRow][randomCol] = ASH;
-			  return;
-		  }
-				  
-		  if(randomDir == 0 && randomRow > 0)
-		  {
-			  if(grid[randomRow - 1][randomCol] == EMPTY)
-			  {
-				  grid[randomRow - 1][randomCol] = FIRE;
-			  }
-		  }
-		  else if(randomDir == 1 && randomCol < grid[randomCol].length - 1)
-		  {
-			  if(grid[randomRow][randomCol + 1] == EMPTY)
-			  {
-				  grid[randomRow][randomCol + 1] = FIRE;
-			  }
-		  }
-		  else if(randomDir == 2 && randomCol > 0)
-		  {
-			  if(grid[randomRow][randomCol - 1] == EMPTY)
-			  {
-				  grid[randomRow][randomCol - 1] = FIRE;
-			  }
-		  }
+		  flaming(randomRow, randomCol);
 	  }
 	  else if(currentTool == ASH && randomRow < grid.length - 1)
 	  {
@@ -470,6 +528,10 @@ public class SandLab
 		  {
 			  grid[randomRow][randomCol] = EMPTY;
 		  }
+	  }
+	  else if(currentTool == LEAVES_FLAMING)
+	  {
+		  flaming(randomRow, randomCol);
 	  }
   }
   
